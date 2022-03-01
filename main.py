@@ -18,7 +18,7 @@ def load_dataset(filename):
     return transactions
 
 
-def print_apriori_results(results, sort_by_support=True):
+def print_apriori_results(results, sort_by_support=True, print_statistics=False):
     if sort_by_support:
         results = sorted(results, key=lambda x: x.support, reverse=True)
     else:
@@ -26,13 +26,14 @@ def print_apriori_results(results, sort_by_support=True):
 
     for r in results:
         print(f'Items: {list(r.items)}  Support: {r.support:.2f}')
-        for stat in r.ordered_statistics:
-            base = None if len(stat.items_base) == 0 else list(stat.items_base)
-            print(f'    {base} -> {list(stat.items_add)}  Confidence: {stat.confidence:.2f}  Lift: {stat.lift:.2f}')
+        if print_statistics:
+            for stat in r.ordered_statistics:
+                base = None if len(stat.items_base) == 0 else list(stat.items_base)
+                print(f'    {base} -> {list(stat.items_add)}  Confidence: {stat.confidence:.2f}  Lift: {stat.lift:.2f}')
 
 
 def single_run():
-    transactions = load_dataset('retail.dat')
+    transactions = load_dataset('accidents.dat')
 
     """
     min_support -- The minimum support of relations (float). Default = 0.1
@@ -40,8 +41,8 @@ def single_run():
     min_lift -- The minimum lift of relations (float). Default = 0.0
     max_length -- The maximum length of the relation (integer). Default = None
     """
-    results = list(apriori(transactions, min_support=0.03, min_confidence=0.0, min_lift=0.0, max_length=3))
-    print_apriori_results(results, sort_by_support=True)
+    results = list(apriori(transactions, min_support=0.15, min_confidence=0.0, min_lift=0.0, max_length=2))
+    print_apriori_results(results, sort_by_support=False)
 
 
 def analyse_time_per_supp():
